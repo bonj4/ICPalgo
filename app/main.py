@@ -1,8 +1,11 @@
 from Display3d import Display3D
 from math import cos, sin, pi
 import numpy as np
+from utils import get_correspondence_indices, center_data
+
 if __name__ == '__main__':
     import time
+
     d = Display3D()
     angle = pi / 4
     t_true = np.array([[-2], [5], [0]])  # Replace with your desired translation vector
@@ -25,13 +28,13 @@ if __name__ == '__main__':
     Q = true_data.T
     P = moved_data.T
     while 1:
-
-
-        color_Q=np.zeros_like(Q)
-        color_P=np.zeros_like(P)
+        color_Q = np.zeros_like(Q)
+        color_P = np.zeros_like(P)
         color_Q[:] = [1, 0, 0]
         color_P[:] = [0, 1, 0]
-
-
-        d.paint([Q,P], [color_Q ,color_P ])
+        center_Q, Q_centered = center_data(Q)
+        center_P, P_centered = center_data(P)
+        correspondences = get_correspondence_indices(P_centered, Q_centered)
+        print(correspondences)
+        d.paint([Q_centered, P_centered], [color_Q, color_P])
         time.sleep(1)
