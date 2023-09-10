@@ -21,7 +21,20 @@ def get_correspondence_indices(P, Q):
         correspondences.append((i, chosen_idx))
     return correspondences
 
+
 def center_data(data, exclude_indices=[]):
     reduced_data = np.delete(data, exclude_indices, axis=0)
-    center = np.array([reduced_data.mean()]).T
+    center = np.array(reduced_data.mean(axis=0)).T
     return center, data - center
+
+
+def compute_cross_covariance(P, Q, correspondences, kernel=lambda diff: 1.0):
+    cov = np.zeros((3, 3))
+    exclude_indices = []
+    for i, j in correspondences:
+        p_point = P[i]
+        q_point = Q[j]
+        weight = kernel(p_point - q_point)
+        if weight < 0.01: exclude_indices.append(i)
+        cov += weight * q_point.dot(p_point.T)
+    return cov, exclude_indices
