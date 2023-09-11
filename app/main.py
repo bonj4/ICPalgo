@@ -25,11 +25,11 @@ if __name__ == '__main__':
     moved_data = R_true.dot(true_data) + t_true
 
     # Assign to variables we use in formulas.
-    Q = true_data.T
-    P = moved_data.T
+    Q = true_data
+    P = moved_data
 
-    color_Q = np.zeros_like(Q)
-    color_P = np.zeros_like(P)
+    color_Q = np.zeros_like(Q).T
+    color_P = np.zeros_like(P).T
     color_Q[:] = [1, 0, 0]
     color_P[:] = [0, 1, 0]
 
@@ -46,9 +46,9 @@ if __name__ == '__main__':
         U, S, V_T = np.linalg.svd(cov)
         R_found = U.dot(V_T)
         print("R_found =\n", R_found,R_found.shape)
-        t_found = center_Q - np.dot(center_P, R_found.T)
+        t_found = center_Q - R_found.dot(center_P)
         print("t_found =\n", t_found,t_found.shape)
-        P_copy = np.dot(P_copy, R_found.T) + t_found.T
+        P_copy = R_found.dot(P_copy) + t_found
 
-        d.paint([Q, P_copy], [color_Q, color_P])
+        d.paint([Q.T, P_copy.T], [color_Q, color_P])
         time.sleep(1)
